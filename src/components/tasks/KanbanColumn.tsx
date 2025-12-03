@@ -10,6 +10,7 @@ interface KanbanColumnProps {
   color: string;
   bgColor: string;
   borderColor: string;
+  gradient: string;
   tasks: Task[];
   onUpdateTask: (taskId: string, updates: Partial<Task>) => Promise<void>;
   onDeleteTask: (taskId: string) => Promise<void>;
@@ -28,6 +29,7 @@ export function KanbanColumn({
   color,
   bgColor,
   borderColor,
+  gradient,
   tasks,
   onUpdateTask,
   onDeleteTask,
@@ -61,26 +63,28 @@ export function KanbanColumn({
   return (
     <div
       className={`
-        flex flex-col rounded-xl border-2 transition-all duration-200
-        ${bgColor} ${borderColor}
-        ${isDropTarget ? 'ring-2 ring-indigo-400 ring-offset-2 scale-[1.02]' : ''}
-        ${isMobile ? 'min-h-[200px]' : 'min-h-[400px] max-h-[70vh]'}
+        flex flex-col rounded-2xl border transition-all duration-300
+        backdrop-blur-md bg-white/40 shadow-lg
+        ${borderColor}
+        ${isDropTarget ? 'ring-2 ring-indigo-400 ring-offset-2 scale-[1.02] bg-white/60' : ''}
+        ${isMobile ? 'min-h-[200px]' : 'min-h-[400px] h-full'}
       `}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       onDragLeave={handleDragLeave}
     >
       {/* Column Header */}
-      <div className={`px-4 py-3 border-b ${borderColor}`}>
+      <div className={`px-4 py-3 border-b ${borderColor} ${bgColor} rounded-t-2xl`}>
         <div className="flex items-center justify-between">
-          <h3 className={`font-semibold ${color}`}>
-            {title}
-          </h3>
+          <div className="flex items-center gap-2">
+            <div className={`w-3 h-3 rounded-full bg-gradient-to-br ${gradient} shadow-sm`}></div>
+            <h3 className={`font-semibold ${color}`}>
+              {title}
+            </h3>
+          </div>
           <span className={`
-            px-2.5 py-0.5 rounded-full text-sm font-medium
-            ${id === 'pending' ? 'bg-yellow-200 text-yellow-800' : ''}
-            ${id === 'in-progress' ? 'bg-blue-200 text-blue-800' : ''}
-            ${id === 'completed' ? 'bg-green-200 text-green-800' : ''}
+            px-2.5 py-0.5 rounded-full text-xs font-bold shadow-sm
+            bg-gradient-to-br ${gradient} text-white
           `}>
             {tasks.length}
           </span>
@@ -94,9 +98,9 @@ export function KanbanColumn({
       `}>
         {tasks.length === 0 ? (
           <div className={`
-            flex items-center justify-center h-24 rounded-lg border-2 border-dashed
+            flex items-center justify-center h-24 rounded-xl border-2 border-dashed
             ${borderColor} transition-colors
-            ${isDropTarget ? 'bg-white/50' : 'bg-white/30'}
+            ${isDropTarget ? 'bg-white/60' : 'bg-white/20'}
           `}>
             <p className="text-sm text-gray-400">
               {isDropTarget ? 'Drop here' : 'No tasks'}
@@ -118,7 +122,7 @@ export function KanbanColumn({
         
         {/* Drop indicator at bottom when dragging */}
         {isDropTarget && tasks.length > 0 && (
-          <div className="h-16 rounded-lg border-2 border-dashed border-indigo-300 bg-indigo-50/50 flex items-center justify-center">
+          <div className="h-16 rounded-xl border-2 border-dashed border-indigo-300 bg-indigo-50/50 flex items-center justify-center backdrop-blur-sm">
             <p className="text-sm text-indigo-500 font-medium">Drop here</p>
           </div>
         )}

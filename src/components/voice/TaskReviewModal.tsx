@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Task, TaskPriority, TaskStatus } from '@/types';
-import { X, Loader2, Save, Calendar, Clock, Flag, CheckCircle, Pencil } from 'lucide-react';
+import { X, Calendar, Clock, Flag, CheckCircle, Mic } from 'lucide-react';
+import { ParsedTaskData, TaskPriority, TaskStatus } from '@/types';
 
-interface EditTaskModalProps {
-  task: Task;
+interface TaskReviewModalProps {
   isOpen: boolean;
-  onClose: () => void;
-  onSave: (taskId: string, updates: Partial<Task>) => Promise<void>;
+  parsedTask: ParsedTaskData;
+  onConfirm: (task: ParsedTaskData) => void;
+  onCancel: () => void;
 }
 
 // Helper function to format date for input field (YYYY-MM-DD) without timezone issues
@@ -19,96 +19,47 @@ function formatDateForInput(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-export function EditTaskModal({ task, isOpen, onClose, onSave }: EditTaskModalProps) {
-  const [title, setTitle] = useState(task.title);
-  const [priority, setPriority] = useState<TaskPriority>(task.priority);
-  const [status, setStatus] = useState<TaskStatus>(task.status);
-  const [dueDate, setDueDate] = useState('');
-  const [dueTime, setDueTime] = useState(task.dueTime || '');
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export function TaskReviewModal({ isOpen, parsedTask, onConfirm, onCancel }: TaskReviewModalProps) {
+  const [title, setTitle] = useState(parsedTask.title);
+  const [priority, setPriority] = useState<TaskPriority>(parsedTask.priority);
+  const [status, setStatus] = useState<TaskStatus>(parsedTask.status);
+  const [dueDate, setDueDate] = useState<string>(
+    parsedTask.dueDate ? formatDateForInput(parsedTask.dueDate) : ''
+  );
+  const [dueTime, setDueTime] = useState<string>(parsedTask.dueTime || '');
 
-  // Reset form when task changes or modal opens
+  // Update state when parsedTask changes
   useEffect(() => {
-    if (isOpen) {
-      setTitle(task.title);
-      setPriority(task.priority);
-      setStatus(task.status);
-      setDueTime(task.dueTime || '');
-      // Use the helper function to avoid timezone issues
-      if (task.dueDate) {
-        const date = new Date(task.dueDate);
-        setDueDate(formatDateForInput(date));
-      } else {
-        setDueDate('');
-      }
-      setError(null);
-    }
-  }, [isOpen, task]);
+    setTitle(parsedTask.title);
+    setPriority(parsedTask.priority);
+    setStatus(parsedTask.status);
+    setDueDate(parsedTask.dueDate ? formatDateForInput(parsedTask.dueDate) : '');
+    setDueTime(parsedTask.dueTime || '');
+  }, [parsedTask]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  if (!isOpen) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!title.trim()) {
-      setError('Task title is required');
-      return;
+    // Parse date properly to avoid timezone issues
+    let parsedDueDate: Date | undefined;
+    if (dueDate) {
+      const [year, month, day] = dueDate.split('-').map(Number);
+      parsedDueDate = new Date(year, month - 1, day);
     }
-
-    setIsSaving(true);
-    setError(null);
-
-    try {
-      const updates: Partial<Task> = {
-        title: title.trim(),
-        priority,
-        status,
-        dueTime: dueTime || undefined,
-      };
-
-      // Parse date properly to avoid timezone issues
-      if (dueDate) {
-        const [year, month, day] = dueDate.split('-').map(Number);
-        updates.dueDate = new Date(year, month - 1, day);
-      } else {
-        updates.dueDate = undefined;
-      }
-
-      await onSave(task.id, updates);
-      onClose();
-    } catch (err) {
-      console.error('Failed to update task:', err);
-      setError('Failed to update task. Please try again.');
-    } finally {
-      setIsSaving(false);
-    }
+    
+    onConfirm({
+      title,
+      priority,
+      status,
+      dueDate: parsedDueDate,
+      dueTime: dueTime || undefined,
+      originalTranscript: parsedTask.originalTranscript,
+    });
   };
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  // Handle escape key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = '';
-    };
-  }, [isOpen, onClose]);
-
-  // Styled button classes matching TaskReviewModal
+  // Only selected buttons get colored backgrounds
   const prioritySelectedStyles = {
     low: 'bg-green-500 text-white border-green-500 shadow-green-200 shadow-md',
     medium: 'bg-amber-500 text-white border-amber-500 shadow-amber-200 shadow-md',
@@ -121,65 +72,50 @@ export function EditTaskModal({ task, isOpen, onClose, onSave }: EditTaskModalPr
     completed: 'bg-emerald-500 text-white border-emerald-500 shadow-emerald-200 shadow-md',
   };
 
+  // Unselected buttons are neutral/white
   const unselectedStyle = 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-gray-400';
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md"
-      onClick={handleBackdropClick}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="edit-task-title"
-    >
-      <div
-        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in duration-200 border border-white/30"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header - Matching TaskReviewModal */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 border border-white/30">
+        {/* Header */}
         <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                <Pencil className="w-4 h-4 text-white" />
+                <Mic className="w-4 h-4 text-white" />
               </div>
-              <h2 id="edit-task-title" className="text-lg font-semibold text-white">
-                Edit Task
-              </h2>
+              <h2 className="text-lg font-semibold text-white">Review Task</h2>
             </div>
             <button
-              onClick={onClose}
+              onClick={onCancel}
               className="text-white/80 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-lg"
-              aria-label="Close"
+              aria-label="Close modal"
             >
-              <X className="w-5 h-5" aria-hidden="true" />
+              <X className="w-5 h-5" />
             </button>
           </div>
+          {/* Original transcript */}
+          <p className="mt-2 text-sm text-white/90 italic bg-white/10 rounded-lg px-3 py-2 backdrop-blur-sm">
+            &ldquo;{parsedTask.originalTranscript}&rdquo;
+          </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Error message */}
-          {error && (
-            <div className="p-3 bg-red-50/80 border border-red-200 rounded-xl text-sm text-red-600">
-              {error}
-            </div>
-          )}
-
           {/* Title */}
           <div>
-            <label htmlFor="edit-title" className="block text-sm font-semibold text-gray-800 mb-1.5">
+            <label htmlFor="task-title" className="block text-sm font-semibold text-gray-800 mb-1.5">
               Task Title
             </label>
             <input
-              id="edit-title"
               type="text"
+              id="task-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter task title"
               className="w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors placeholder:text-gray-400 bg-white/70 backdrop-blur-sm"
-              autoFocus
+              placeholder="Enter task title"
+              required
             />
           </div>
 
@@ -231,32 +167,29 @@ export function EditTaskModal({ task, isOpen, onClose, onSave }: EditTaskModalPr
             </div>
           </div>
 
-          {/* Due Date & Time Row */}
+          {/* Due Date & Time */}
           <div className="grid grid-cols-2 gap-3">
-            {/* Due Date */}
             <div>
-              <label htmlFor="edit-due-date" className="block text-sm font-semibold text-gray-800 mb-1.5">
+              <label htmlFor="due-date" className="block text-sm font-semibold text-gray-800 mb-1.5">
                 <Calendar className="w-4 h-4 inline mr-1" />
                 Due Date
               </label>
               <input
-                id="edit-due-date"
                 type="date"
+                id="due-date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
                 className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-gray-900 font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white/70 backdrop-blur-sm"
               />
             </div>
-
-            {/* Due Time */}
             <div>
-              <label htmlFor="edit-due-time" className="block text-sm font-semibold text-gray-800 mb-1.5">
+              <label htmlFor="due-time" className="block text-sm font-semibold text-gray-800 mb-1.5">
                 <Clock className="w-4 h-4 inline mr-1" />
                 Due Time
               </label>
               <input
-                id="edit-due-time"
                 type="time"
+                id="due-time"
                 value={dueTime}
                 onChange={(e) => setDueTime(e.target.value)}
                 className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-gray-900 font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white/70 backdrop-blur-sm"
@@ -264,32 +197,51 @@ export function EditTaskModal({ task, isOpen, onClose, onSave }: EditTaskModalPr
             </div>
           </div>
 
+          {/* Parsed info hint */}
+          {(parsedTask.dueDate || parsedTask.dueTime || parsedTask.priority !== 'medium') && (
+            <div className="bg-gradient-to-r from-indigo-50/80 to-purple-50/80 rounded-xl p-4 border border-indigo-200/50 backdrop-blur-sm">
+              <p className="font-semibold text-indigo-800 mb-2 flex items-center gap-1">
+                <span>✨</span> Extracted from your voice:
+              </p>
+              <ul className="space-y-1">
+                {parsedTask.priority !== 'medium' && (
+                  <li className="flex items-center gap-2 text-sm">
+                    <span className={`px-2 py-0.5 rounded-lg font-medium ${parsedTask.priority === 'high' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}>
+                      {parsedTask.priority.charAt(0).toUpperCase() + parsedTask.priority.slice(1)} Priority
+                    </span>
+                  </li>
+                )}
+                {parsedTask.dueDate && (
+                  <li className="flex items-center gap-2 text-sm text-indigo-800 font-medium">
+                    <Calendar className="w-4 h-4" />
+                    Due: {parsedTask.dueDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}
+                  </li>
+                )}
+                {parsedTask.dueTime && (
+                  <li className="flex items-center gap-2 text-sm text-indigo-800 font-medium">
+                    <Clock className="w-4 h-4" />
+                    Time: {parsedTask.dueTime}
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
+
           {/* Actions */}
           <div className="flex gap-3 pt-2">
             <button
               type="button"
-              onClick={onClose}
-              disabled={isSaving}
-              className="flex-1 px-4 py-2.5 text-gray-700 bg-gray-100/80 hover:bg-gray-200/80 rounded-xl font-semibold transition-colors border border-gray-200 disabled:opacity-50"
+              onClick={onCancel}
+              className="flex-1 px-4 py-2.5 text-gray-700 bg-gray-100/80 hover:bg-gray-200/80 rounded-xl font-semibold transition-colors border border-gray-200"
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={isSaving || !title.trim()}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed rounded-xl font-semibold transition-all shadow-lg shadow-indigo-500/30 hover:shadow-xl"
+              disabled={!title.trim()}
+              className="flex-1 px-4 py-2.5 text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed rounded-xl font-semibold transition-all shadow-lg shadow-indigo-500/30 hover:shadow-xl"
             >
-              {isSaving ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" aria-hidden="true" />
-                  Save Changes
-                </>
-              )}
+              Create Task
             </button>
           </div>
         </form>

@@ -38,9 +38,21 @@ export interface UpdateTaskInput {
   tags?: string[];
 }
 
+export interface ParsedTaskData {
+  title: string;
+  priority: TaskPriority;
+  status: TaskStatus;
+  dueDate?: Date;
+  dueTime?: string;
+  originalTranscript: string;
+}
+
 export interface VoiceCommand {
   action: 'add' | 'complete' | 'delete' | 'list' | 'unknown';
   taskTitle?: string;
   priority?: TaskPriority;
+  status?: TaskStatus;
+  dueDate?: Date;
+  dueTime?: string;
   originalTranscript: string;
 }

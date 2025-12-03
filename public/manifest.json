@@ -1,0 +1,19 @@
+{
+  "name": "Voice Task Tracker",
+  "short_name": "VoiceTask",
+  "description": "Manage your tasks effortlessly with voice commands. Add, complete, and organize tasks by simply speaking.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "lang": "en-US"
+}

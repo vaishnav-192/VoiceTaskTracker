@@ -108,11 +108,13 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-dashed border-emerald-200 rounded-xl text-emerald-700 hover:text-emerald-800 hover:border-emerald-400 hover:from-emerald-100 hover:to-teal-100 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 font-medium"
+        className="w-full h-full min-h-[120px] flex flex-col items-center justify-center gap-2 py-4 px-4 glass-emerald rounded-2xl text-emerald-700 hover:text-emerald-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 font-medium"
         aria-label="Open form to add a new task"
       >
-        <Plus className="w-5 h-5" aria-hidden="true" />
-        Add task manually
+        <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
+          <Plus className="w-6 h-6 text-white" aria-hidden="true" />
+        </div>
+        <span className="text-sm">Add task manually</span>
       </button>
     );
   }
@@ -121,15 +123,15 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
     <form 
       onSubmit={handleSubmit}
       onKeyDown={handleKeyDown}
-      className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl shadow-lg p-5 border border-emerald-100"
+      className="glass-emerald rounded-2xl p-4 h-full"
       aria-label="New task form"
     >
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/30">
             <Plus className="w-4 h-4 text-white" aria-hidden="true" />
           </div>
-          <h3 className="font-semibold text-gray-900 text-lg">New Task</h3>
+          <h3 className="font-semibold text-gray-800">New Task</h3>
         </div>
         <button
           type="button"
@@ -144,18 +146,15 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
 
       {/* Error display */}
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2" role="alert">
-          <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
-          <span className="text-sm text-red-700">{error}</span>
+        <div className="mb-3 p-2 bg-red-50/80 border border-red-200 rounded-lg flex items-start gap-2" role="alert">
+          <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+          <span className="text-xs text-red-700">{error}</span>
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {/* Title Field */}
         <div>
-          <label htmlFor="task-title" className="block text-sm font-medium text-gray-700 mb-1">
-            Title <span className="text-red-500" aria-hidden="true">*</span>
-          </label>
           <input
             ref={inputRef}
             id="task-title"
@@ -166,27 +165,22 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             maxLength={MAX_TITLE_LENGTH}
             disabled={isSubmitting}
             className={`
-              w-full px-3 py-2.5 border rounded-lg outline-none transition-all
-              text-gray-900 placeholder:text-gray-400
+              w-full px-3 py-2 border rounded-lg outline-none transition-all text-sm
+              text-gray-900 placeholder:text-gray-400 bg-white/70
               disabled:opacity-50 disabled:cursor-not-allowed
               focus:ring-2 focus:border-transparent
-              ${error ? 'border-red-300 focus:ring-red-500' : 'border-gray-200 focus:ring-indigo-500'}
+              ${error ? 'border-red-300 focus:ring-red-500' : 'border-gray-200 focus:ring-emerald-500'}
             `}
             aria-invalid={!!error}
             required
           />
-          <div className="flex justify-end mt-1">
-            <span className={`text-xs ${title.length > MAX_TITLE_LENGTH * 0.9 ? 'text-orange-500' : 'text-gray-400'}`}>
-              {title.length}/{MAX_TITLE_LENGTH}
-            </span>
-          </div>
         </div>
 
-        {/* Due Date & Time Row */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* Due Date & Time Row - Compact */}
+        <div className="grid grid-cols-2 gap-2">
           <div>
-            <label htmlFor="task-due-date" className="block text-sm font-medium text-gray-700 mb-1">
-              <Calendar className="w-4 h-4 inline mr-1" aria-hidden="true" />
+            <label htmlFor="task-due-date" className="block text-xs font-medium text-gray-600 mb-1">
+              <Calendar className="w-3 h-3 inline mr-1" aria-hidden="true" />
               Due Date
             </label>
             <input
@@ -196,12 +190,12 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
               onChange={(e) => setDueDate(e.target.value)}
               min={today}
               disabled={isSubmitting}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-gray-900"
+              className="w-full px-2 py-1.5 text-sm border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:opacity-50 text-gray-900 bg-white/70"
             />
           </div>
           <div>
-            <label htmlFor="task-due-time" className="block text-sm font-medium text-gray-700 mb-1">
-              <Clock className="w-4 h-4 inline mr-1" aria-hidden="true" />
+            <label htmlFor="task-due-time" className="block text-xs font-medium text-gray-600 mb-1">
+              <Clock className="w-3 h-3 inline mr-1" aria-hidden="true" />
               Due Time
             </label>
             <input
@@ -210,17 +204,15 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
               value={dueTime}
               onChange={(e) => setDueTime(e.target.value)}
               disabled={isSubmitting}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-gray-900"
+              className="w-full px-2 py-1.5 text-sm border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:opacity-50 text-gray-900 bg-white/70"
             />
           </div>
         </div>
 
-        {/* Priority Field */}
+        {/* Priority Field - Compact */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Priority
-          </label>
-          <div className="flex gap-2" role="radiogroup" aria-label="Task priority">
+          <label className="block text-xs font-medium text-gray-600 mb-1.5">Priority</label>
+          <div className="flex gap-1.5" role="radiogroup" aria-label="Task priority">
             {(['low', 'medium', 'high'] as TaskPriority[]).map((p) => (
               <button
                 key={p}
@@ -228,16 +220,15 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
                 onClick={() => setPriority(p)}
                 disabled={isSubmitting}
                 className={`
-                  flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all
+                  flex-1 py-1.5 px-2 rounded-lg text-xs font-medium transition-all
                   disabled:opacity-50 disabled:cursor-not-allowed
-                  focus:outline-none focus:ring-2 focus:ring-offset-1
                   ${priority === p 
                     ? p === 'high'
-                      ? 'bg-red-100 text-red-700 ring-2 ring-red-500'
+                      ? 'bg-red-500 text-white shadow-sm'
                       : p === 'medium'
-                        ? 'bg-yellow-100 text-yellow-700 ring-2 ring-yellow-500'
-                        : 'bg-gray-100 text-gray-700 ring-2 ring-gray-500'
-                    : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                        ? 'bg-amber-500 text-white shadow-sm'
+                        : 'bg-green-500 text-white shadow-sm'
+                    : 'bg-white/60 text-gray-600 hover:bg-white/80'
                   }
                 `}
                 role="radio"
@@ -249,49 +240,11 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
           </div>
         </div>
 
-        {/* Status Field */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Status
-          </label>
-          <div className="flex gap-2" role="radiogroup" aria-label="Task status">
-            {([
-              { value: 'pending', label: 'Pending', color: 'yellow' },
-              { value: 'in-progress', label: 'In Progress', color: 'blue' },
-              { value: 'completed', label: 'Completed', color: 'green' }
-            ] as const).map((s) => (
-              <button
-                key={s.value}
-                type="button"
-                onClick={() => setStatus(s.value)}
-                disabled={isSubmitting}
-                className={`
-                  flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                  focus:outline-none focus:ring-2 focus:ring-offset-1
-                  ${status === s.value 
-                    ? s.color === 'yellow'
-                      ? 'bg-yellow-100 text-yellow-700 ring-2 ring-yellow-500'
-                      : s.color === 'blue'
-                        ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-500'
-                        : 'bg-green-100 text-green-700 ring-2 ring-green-500'
-                    : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
-                  }
-                `}
-                role="radio"
-                aria-checked={status === s.value}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Submit Button */}
         <button
           type="submit"
           disabled={!title.trim() || isSubmitting}
-          className="w-full py-2.5 px-4 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 flex items-center justify-center gap-2"
+          className="w-full py-2 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg text-sm font-medium hover:from-emerald-600 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <>

@@ -38,15 +38,15 @@ export function KanbanCard({
   const [error, setError] = useState<string | null>(null);
 
   const priorityStyles = {
-    low: 'border-l-gray-300 bg-gray-50',
-    medium: 'border-l-yellow-400 bg-yellow-50/50',
+    low: 'border-l-gray-400 bg-white/70',
+    medium: 'border-l-amber-400 bg-amber-50/50',
     high: 'border-l-red-400 bg-red-50/50',
   };
 
   const priorityBadge = {
-    low: 'bg-gray-100 text-gray-600',
-    medium: 'bg-yellow-100 text-yellow-700',
-    high: 'bg-red-100 text-red-700',
+    low: 'bg-gray-100/80 text-gray-600',
+    medium: 'bg-amber-100/80 text-amber-700',
+    high: 'bg-red-100/80 text-red-700',
   };
 
   const handleDelete = async () => {
@@ -94,13 +94,13 @@ export function KanbanCard({
         onDragStart={handleDragStart}
         onDragEnd={onDragEnd}
         className={`
-          group relative bg-white rounded-lg border shadow-sm
+          group relative rounded-xl border shadow-sm backdrop-blur-sm
           border-l-4 ${priorityStyles[task.priority]}
           transition-all duration-200 cursor-grab active:cursor-grabbing
-          hover:shadow-md hover:scale-[1.02]
-          ${isDragging ? 'opacity-50 scale-95 shadow-lg rotate-2' : ''}
+          hover:shadow-lg hover:scale-[1.02] hover:bg-white/90
+          ${isDragging ? 'opacity-50 scale-95 shadow-xl rotate-2' : ''}
           ${isDeleting ? 'opacity-50 animate-pulse' : ''}
-          ${task.status === 'completed' ? 'opacity-60' : ''}
+          ${task.status === 'completed' ? 'opacity-70' : ''}
         `}
         role="article"
         aria-label={`Task: ${task.title}`}
