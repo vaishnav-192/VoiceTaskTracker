@@ -8,7 +8,7 @@ import { signOut } from '@/lib/firebase/auth';
 import { useTasks } from '@/lib/hooks/useTasks';
 import { useToast } from '@/components/ui/Toast';
 import { VoiceRecorder } from '@/components/voice/VoiceRecorder';
-import { TaskList } from '@/components/tasks/TaskList';
+import { KanbanBoard } from '@/components/tasks/KanbanBoard';
 import { TaskForm } from '@/components/tasks/TaskForm';
 import { LoadingScreen } from '@/components/ui/Loading';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
@@ -72,6 +72,10 @@ export default function DashboardPage() {
       await updateTask(taskId, updates);
       if (updates.status === 'completed') {
         showSuccess('Task completed!');
+      } else if (updates.status === 'in-progress') {
+        showSuccess('Task moved to In Progress');
+      } else if (updates.status === 'pending') {
+        showSuccess('Task moved to Pending');
       }
     } catch (error) {
       showError(getErrorMessage(error));
@@ -139,7 +143,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
               <svg 
@@ -209,7 +213,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="space-y-6">
           {/* Voice Recorder Section */}
           <section aria-label="Voice input">
@@ -225,15 +229,29 @@ export default function DashboardPage() {
             </ErrorBoundary>
           </section>
 
-          {/* Task List */}
+          {/* Kanban Board */}
           <section aria-label="Your tasks">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-800">Your Tasks</h2>
+              <h2 className="text-lg font-semibold text-gray-800">Kanban Board</h2>
               <div className="flex items-center gap-4 text-sm text-gray-500">
-                <span>{stats.pending} pending</span>
-                <span>{stats.completed} completed</span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-yellow-400"></span>
+                  {stats.pending} pending
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                  {stats.inProgress || 0} in progress
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-green-400"></span>
+                  {stats.completed} completed
+                </span>
               </div>
             </div>
+            
+            <p className="text-sm text-gray-500 mb-4">
+              Drag and drop tasks between columns to update their status
+            </p>
             
             {tasksLoading ? (
               <div className="flex justify-center py-12">
@@ -241,7 +259,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <ErrorBoundary>
-                <TaskList 
+                <KanbanBoard 
                   tasks={tasks} 
                   onUpdateTask={handleUpdateTask}
                   onDeleteTask={handleDeleteTask}
@@ -254,7 +272,7 @@ export default function DashboardPage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white/50 mt-auto">
-        <div className="max-w-4xl mx-auto px-4 py-4 text-center text-sm text-gray-500">
+        <div className="max-w-7xl mx-auto px-4 py-4 text-center text-sm text-gray-500">
           <p>Voice Task Tracker &copy; {new Date().getFullYear()}</p>
         </div>
       </footer>
