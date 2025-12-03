@@ -142,7 +142,15 @@ export function VoiceRecorder({ tasks, onTaskAction }: VoiceRecorderProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+    <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-lg p-6 border border-indigo-100">
+      {/* Section Header */}
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+          <Mic className="w-4 h-4 text-white" aria-hidden="true" />
+        </div>
+        <h3 className="font-semibold text-gray-900">Voice Input</h3>
+      </div>
+      
       <div className="flex flex-col items-center gap-4">
         {/* Microphone Button */}
         <button
@@ -227,13 +235,13 @@ export function VoiceRecorder({ tasks, onTaskAction }: VoiceRecorderProps) {
 
         {/* Voice Commands Help */}
         <details className="w-full mt-2">
-          <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-700">
+          <summary className="text-sm text-indigo-600 cursor-pointer hover:text-indigo-800 font-medium">
             Available voice commands
           </summary>
-          <div className="mt-2 text-sm text-gray-600 bg-gray-50 rounded-lg p-3 space-y-1">
-            <p><strong>&ldquo;Add task [name]&rdquo;</strong> - Create a new task</p>
-            <p><strong>&ldquo;Add urgent task [name]&rdquo;</strong> - Create high priority task</p>
-            <p><strong>&ldquo;List my tasks&rdquo;</strong> - Hear task summary</p>
+          <div className="mt-2 text-sm text-gray-700 bg-white rounded-lg p-3 space-y-1 border border-gray-100">
+            <p><strong className="text-indigo-600">&ldquo;Add task [name]&rdquo;</strong> - Create a new task</p>
+            <p><strong className="text-indigo-600">&ldquo;Add urgent task [name]&rdquo;</strong> - Create high priority task</p>
+            <p><strong className="text-indigo-600">&ldquo;List my tasks&rdquo;</strong> - Hear task summary</p>
           </div>
         </details>
       </div>

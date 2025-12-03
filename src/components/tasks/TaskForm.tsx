@@ -108,7 +108,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-white border-2 border-dashed border-gray-200 rounded-xl text-gray-500 hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        className="w-full flex items-center justify-center gap-2 py-4 px-4 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-dashed border-emerald-200 rounded-xl text-emerald-700 hover:text-emerald-800 hover:border-emerald-400 hover:from-emerald-100 hover:to-teal-100 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 font-medium"
         aria-label="Open form to add a new task"
       >
         <Plus className="w-5 h-5" aria-hidden="true" />
@@ -121,11 +121,16 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
     <form 
       onSubmit={handleSubmit}
       onKeyDown={handleKeyDown}
-      className="bg-white rounded-xl shadow-lg p-5 border border-gray-100"
+      className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl shadow-lg p-5 border border-emerald-100"
       aria-label="New task form"
     >
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-900 text-lg">New Task</h3>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+            <Plus className="w-4 h-4 text-white" aria-hidden="true" />
+          </div>
+          <h3 className="font-semibold text-gray-900 text-lg">New Task</h3>
+        </div>
         <button
           type="button"
           onClick={handleClose}
@@ -162,6 +167,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             disabled={isSubmitting}
             className={`
               w-full px-3 py-2.5 border rounded-lg outline-none transition-all
+              text-gray-900 placeholder:text-gray-400
               disabled:opacity-50 disabled:cursor-not-allowed
               focus:ring-2 focus:border-transparent
               ${error ? 'border-red-300 focus:ring-red-500' : 'border-gray-200 focus:ring-indigo-500'}
@@ -190,7 +196,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
               onChange={(e) => setDueDate(e.target.value)}
               min={today}
               disabled={isSubmitting}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-gray-900"
             />
           </div>
           <div>
@@ -204,7 +210,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
               value={dueTime}
               onChange={(e) => setDueTime(e.target.value)}
               disabled={isSubmitting}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-gray-900"
             />
           </div>
         </div>

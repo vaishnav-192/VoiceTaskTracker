@@ -8,10 +8,12 @@ import {
   AlertCircle, 
   GripVertical,
   Loader2,
-  Calendar
+  Calendar,
+  Pencil
 } from 'lucide-react';
 import { formatDistanceToNow, format, isPast, isToday } from 'date-fns';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { EditTaskModal } from './EditTaskModal';
 
 interface KanbanCardProps {
   task: Task;
@@ -24,6 +26,7 @@ interface KanbanCardProps {
 
 export function KanbanCard({ 
   task, 
+  onUpdate,
   onDelete, 
   onDragStart, 
   onDragEnd,
@@ -31,6 +34,7 @@ export function KanbanCard({
 }: KanbanCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const priorityStyles = {
@@ -158,22 +162,37 @@ export function KanbanCard({
               {formatDistanceToNow(task.createdAt, { addSuffix: true })}
             </span>
 
-            {/* Delete Button */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowDeleteConfirm(true);
-              }}
-              disabled={isDeleting}
-              className="p-1 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded transition-colors disabled:opacity-50 opacity-0 group-hover:opacity-100"
-              aria-label="Delete task"
-            >
-              {isDeleting ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
-              ) : (
-                <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
-              )}
-            </button>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Edit Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowEditModal(true);
+                }}
+                className="p-1 text-gray-300 hover:text-indigo-500 hover:bg-indigo-50 rounded transition-colors"
+                aria-label="Edit task"
+              >
+                <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
+              </button>
+
+              {/* Delete Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDeleteConfirm(true);
+                }}
+                disabled={isDeleting}
+                className="p-1 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                aria-label="Delete task"
+              >
+                {isDeleting ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+                ) : (
+                  <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -188,6 +207,14 @@ export function KanbanCard({
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteConfirm(false)}
         variant="danger"
+      />
+
+      {/* Edit Task Modal */}
+      <EditTaskModal
+        task={task}
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onSave={onUpdate}
       />
     </>
   );
