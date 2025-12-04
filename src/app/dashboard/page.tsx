@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogOut, User as UserIcon, AlertTriangle, Camera } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -9,6 +9,10 @@ import { useTasks } from '@/lib/hooks/useTasks';
 import { useToast } from '@/components/ui/Toast';
 import { VoiceRecorder } from '@/components/voice/VoiceRecorder';
 import { KanbanBoard } from '@/components/tasks/KanbanBoard';
+import { ListView } from '@/components/tasks/ListView';
+import { CalendarView } from '@/components/tasks/CalendarView';
+import { ViewToggle, ViewType } from '@/components/tasks/ViewToggle';
+import { TaskFilters, TaskFiltersState } from '@/components/tasks/TaskFilters';
 import { TaskForm } from '@/components/tasks/TaskForm';
 import { LoadingScreen } from '@/components/ui/Loading';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
@@ -22,6 +26,12 @@ export default function DashboardPage() {
   const { success: showSuccess, error: showError } = useToast();
   const [showProfileUpload, setShowProfileUpload] = useState(false);
   const [userPhotoURL, setUserPhotoURL] = useState<string | null>(null);
+  const [currentView, setCurrentView] = useState<ViewType>('kanban');
+  const [filters, setFilters] = useState<TaskFiltersState>({
+    searchQuery: '',
+    statusFilter: 'all',
+    priorityFilter: 'all',
+  });
   
   const { 
     tasks, 
@@ -139,6 +149,31 @@ export default function DashboardPage() {
 
   const stats = getTaskStats();
 
+  // Filter tasks based on search and filters
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      // Search filter
+      if (filters.searchQuery) {
+        const query = filters.searchQuery.toLowerCase();
+        if (!task.title.toLowerCase().includes(query)) {
+          return false;
+        }
+      }
+      
+      // Status filter
+      if (filters.statusFilter !== 'all' && task.status !== filters.statusFilter) {
+        return false;
+      }
+      
+      // Priority filter
+      if (filters.priorityFilter !== 'all' && task.priority !== filters.priorityFilter) {
+        return false;
+      }
+      
+      return true;
+    });
+  }, [tasks, filters]);
+
   return (
     <div className="min-h-screen animated-gradient-bg flex flex-col">
       {/* Header */}
@@ -233,30 +268,47 @@ export default function DashboardPage() {
 
         {/* Kanban Board - Takes up most of the space */}
         <section aria-label="Your tasks" className="glass-card rounded-2xl p-5">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <h2 className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Your Tasks</h2>
-            <div className="flex items-center gap-4 text-sm">
-              <span className="flex items-center gap-1.5 glass-subtle px-3 py-1.5 rounded-full">
-                <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-sm shadow-yellow-400/50"></span>
-                <span className="font-medium text-gray-700">{stats.pending}</span>
-                <span className="text-gray-500">pending</span>
-              </span>
-              <span className="flex items-center gap-1.5 glass-subtle px-3 py-1.5 rounded-full">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-400 shadow-sm shadow-blue-400/50"></span>
-                <span className="font-medium text-gray-700">{stats.inProgress || 0}</span>
-                <span className="text-gray-500">in progress</span>
-              </span>
-              <span className="flex items-center gap-1.5 glass-subtle px-3 py-1.5 rounded-full">
-                <span className="w-2.5 h-2.5 rounded-full bg-green-400 shadow-sm shadow-green-400/50"></span>
-                <span className="font-medium text-gray-700">{stats.completed}</span>
-                <span className="text-gray-500">completed</span>
-              </span>
-            </div>
+            
+            {/* View Toggle */}
+            <ViewToggle currentView={currentView} onViewChange={setCurrentView} />
+          </div>
+
+          {/* Stats */}
+          <div className="flex flex-wrap items-center gap-4 text-sm mb-4">
+            <span className="flex items-center gap-1.5 glass-subtle px-3 py-1.5 rounded-full">
+              <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-sm shadow-yellow-400/50"></span>
+              <span className="font-medium text-gray-700">{stats.pending}</span>
+              <span className="text-gray-500">pending</span>
+            </span>
+            <span className="flex items-center gap-1.5 glass-subtle px-3 py-1.5 rounded-full">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-400 shadow-sm shadow-blue-400/50"></span>
+              <span className="font-medium text-gray-700">{stats.inProgress || 0}</span>
+              <span className="text-gray-500">in progress</span>
+            </span>
+            <span className="flex items-center gap-1.5 glass-subtle px-3 py-1.5 rounded-full">
+              <span className="w-2.5 h-2.5 rounded-full bg-green-400 shadow-sm shadow-green-400/50"></span>
+              <span className="font-medium text-gray-700">{stats.completed}</span>
+              <span className="text-gray-500">completed</span>
+            </span>
+          </div>
+
+          {/* Search and Filters */}
+          <div className="mb-4">
+            <TaskFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+              totalTasks={tasks.length}
+              filteredCount={filteredTasks.length}
+            />
           </div>
           
-          <p className="text-sm text-gray-500 mb-4">
-            Drag and drop tasks between columns to update their status
-          </p>
+          {currentView === 'kanban' && (
+            <p className="text-sm text-gray-500 mb-4">
+              Drag and drop tasks between columns to update their status
+            </p>
+          )}
           
           {tasksLoading ? (
             <div className="flex justify-center py-12">
@@ -264,11 +316,27 @@ export default function DashboardPage() {
             </div>
           ) : (
             <ErrorBoundary>
-              <KanbanBoard 
-                tasks={tasks} 
-                onUpdateTask={handleUpdateTask}
-                onDeleteTask={handleDeleteTask}
-              />
+              {currentView === 'kanban' && (
+                <KanbanBoard 
+                  tasks={filteredTasks} 
+                  onUpdateTask={handleUpdateTask}
+                  onDeleteTask={handleDeleteTask}
+                />
+              )}
+              {currentView === 'list' && (
+                <ListView 
+                  tasks={filteredTasks} 
+                  onUpdateTask={handleUpdateTask}
+                  onDeleteTask={handleDeleteTask}
+                />
+              )}
+              {currentView === 'calendar' && (
+                <CalendarView 
+                  tasks={filteredTasks} 
+                  onUpdateTask={handleUpdateTask}
+                  onDeleteTask={handleDeleteTask}
+                />
+              )}
             </ErrorBoundary>
           )}
         </section>

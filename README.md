@@ -1,6 +1,6 @@
 # 🎙️ Voice-Enabled Task Tracker
 
-A modern, voice-enabled task management application with a Kanban board interface. Built with Next.js, Firebase, and Tailwind CSS.
+A modern, voice-enabled task management application with multiple views (Kanban, List, Calendar). Built with Next.js, Firebase, and Tailwind CSS.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16.0.6-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)
@@ -10,11 +10,30 @@ A modern, voice-enabled task management application with a Kanban board interfac
 ## ✨ Features
 
 ### 🎯 Task Management
+- **Multiple Views** - Switch between three different task views:
+  - 📊 **Kanban Board** - Visual columns for Pending, In Progress, Completed
+  - 📋 **List View** - Tabular view with sorting and filtering
+  - 📅 **Calendar View** - Monthly calendar showing tasks by due date
+
 - **Kanban Board Layout** - Visual task organization with three columns:
   - 📋 **Pending** - Tasks waiting to be started
   - 🔄 **In Progress** - Tasks currently being worked on
   - ✅ **Completed** - Finished tasks
 - **Drag & Drop** - Easily move tasks between columns with intuitive drag-and-drop
+
+- **List View Features**:
+  - Sort by title, priority, status, due date, or creation date
+  - Filter by status (Pending, In Progress, Completed)
+  - Filter by priority (High, Medium, Low)
+  - Quick status toggle with clickable icons
+
+- **Calendar View Features**:
+  - Monthly calendar layout
+  - Tasks displayed on their due dates
+  - Color-coded by priority
+  - Click on a day to see all tasks
+  - Navigate between months
+
 - **Task Details** - Each task includes:
   - Title
   - Priority (Low, Medium, High)
@@ -77,6 +96,9 @@ src/
 │   │   ├── KanbanBoard.tsx   # Main Kanban layout
 │   │   ├── KanbanCard.tsx    # Draggable task card
 │   │   ├── KanbanColumn.tsx  # Column container
+│   │   ├── ListView.tsx      # List/Table view with sorting & filtering
+│   │   ├── CalendarView.tsx  # Monthly calendar view
+│   │   ├── ViewToggle.tsx    # View switcher component
 │   │   ├── TaskForm.tsx      # New task form
 │   │   └── EditTaskModal.tsx # Edit task modal
 │   ├── ui/
