@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Chrome, AlertTriangle, Loader2, ArrowLeft } from 'lucide-react';
-import { signInWithGoogle } from '@/lib/firebase/auth';
-import { useAuth } from '@/context/AuthContext';
-import { useToast } from '@/components/ui/Toast';
-import { getErrorMessage, logError } from '@/lib/errors';
+import { signInWithGoogle } from '@/backend/firebase/auth';
+import { useAuth } from '@/frontend/context/AuthContext';
+import { useToast } from '@/frontend/components/ui/Toast';
+import { getErrorMessage, logError } from '@/backend/errors';
 import Link from 'next/link';
 
 export default function LoginPage() {

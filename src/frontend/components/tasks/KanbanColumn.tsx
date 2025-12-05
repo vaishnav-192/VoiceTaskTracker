@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
-import { Task, TaskStatus } from '@/types';
+import { Task, TaskStatus } from '@/shared/types';
 import { KanbanCard } from './KanbanCard';
 
 interface KanbanColumnProps {

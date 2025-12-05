@@ -8,7 +8,7 @@ import {
   getRedirectResult
 } from 'firebase/auth';
 import { getFirebaseAuth, isFirebaseReady } from './config';
-import { AuthError, getErrorMessage, logError } from '@/lib/errors';
+import { AuthError, getErrorMessage, logError } from '@/backend/errors';
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -96,16 +96,4 @@ export async function signOut(): Promise<void> {
     logError(error, { context: 'signOut' });
     throw new AuthError(getErrorMessage(error), 'auth/sign-out-failed');
   }
-}
-
-/**
- * Get the current authenticated user
- */
-export function getCurrentUser(): User | null {
-  if (!isFirebaseReady()) {
-    return null;
-  }
-
-  const auth = getFirebaseAuth();
-  return auth.currentUser;
 }

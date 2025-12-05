@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Task } from '@/types';
+import { Task } from '@/shared/types';
 import { 
   Trash2, 
   Clock, 
@@ -12,7 +12,7 @@ import {
   Pencil
 } from 'lucide-react';
 import { formatDistanceToNow, format, isPast, isToday } from 'date-fns';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { ConfirmDialog } from '@/frontend/components/ui/ConfirmDialog';
 import { EditTaskModal } from './EditTaskModal';
 
 interface KanbanCardProps {

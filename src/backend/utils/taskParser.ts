@@ -1,4 +1,4 @@
-import { VoiceCommand, TaskPriority, TaskStatus, ParsedTaskData } from '@/types';
+import { VoiceCommand, TaskPriority, TaskStatus, ParsedTaskData } from '@/shared/types';
 
 /**
  * Parses relative date expressions into actual dates

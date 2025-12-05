@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Task, TaskStatus } from '@/types';
+import { Task, TaskStatus } from '@/shared/types';
 import { KanbanColumn } from './KanbanColumn';
 import { ClipboardList, Mic, Plus } from 'lucide-react';
 

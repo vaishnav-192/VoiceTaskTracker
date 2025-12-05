@@ -2,9 +2,9 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth, isFirebaseReady, getInitializationError } from '@/lib/firebase/config';
-import { handleRedirectResult } from '@/lib/firebase/auth';
-import { logError } from '@/lib/errors';
+import { auth, isFirebaseReady, getInitializationError } from '@/backend/firebase/config';
+import { handleRedirectResult } from '@/backend/firebase/auth';
+import { logError } from '@/backend/errors';
 
 interface AuthContextType {
   user: User | null;

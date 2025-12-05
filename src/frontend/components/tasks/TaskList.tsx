@@ -1,6 +1,6 @@
 'use client';
 
-import { Task } from '@/types';
+import { Task } from '@/shared/types';
 import { TaskCard } from './TaskCard';
 import { ClipboardList, Mic, Plus } from 'lucide-react';
 

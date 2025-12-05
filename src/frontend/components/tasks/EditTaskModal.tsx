@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Task, TaskPriority, TaskStatus } from '@/types';
+import { Task, TaskPriority, TaskStatus } from '@/shared/types';
 import { X, Loader2, Save, Calendar, Clock, Flag, CheckCircle, Pencil } from 'lucide-react';
 
 interface EditTaskModalProps {

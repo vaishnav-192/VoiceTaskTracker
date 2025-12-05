@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Plus, X, Loader2, AlertCircle, Calendar, Clock } from 'lucide-react';
-import { TaskPriority, TaskStatus, CreateTaskInput } from '@/types';
+import { TaskPriority, TaskStatus, CreateTaskInput } from '@/shared/types';
 
 interface TaskFormProps {
   onSubmit: (task: Omit<CreateTaskInput, 'userId'>) => Promise<void>;

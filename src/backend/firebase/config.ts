@@ -2,8 +2,8 @@ import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth, connectAuthEmulator } from 'firebase/auth';
 import { getFirestore, Firestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getStorage, FirebaseStorage, connectStorageEmulator } from 'firebase/storage';
-import { firebaseConfig, isFirebaseConfigured } from '@/lib/env';
-import { ConfigurationError, logError } from '@/lib/errors';
+import { firebaseConfig, isFirebaseConfigured } from '@/backend/env';
+import { ConfigurationError, logError } from '@/backend/errors';
 
 // Firebase instances
 let app: FirebaseApp | undefined;

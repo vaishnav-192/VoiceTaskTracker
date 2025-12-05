@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Task, TaskStatus, TaskPriority } from '@/types';
+import { Task, TaskStatus, TaskPriority } from '@/shared/types';
 import { 
   Trash2, 
   Clock, 
@@ -20,7 +20,7 @@ import {
   ArrowUpDown
 } from 'lucide-react';
 import { formatDistanceToNow, format, isPast, isToday } from 'date-fns';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { ConfirmDialog } from '@/frontend/components/ui/ConfirmDialog';
 import { EditTaskModal } from './EditTaskModal';
 
 interface ListViewProps {

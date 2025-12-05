@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/frontend/context/AuthContext';
 import { Mic, CheckCircle, Clock, Zap } from 'lucide-react';
 import Link from 'next/link';
 

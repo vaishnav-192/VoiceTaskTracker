@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Calendar, Clock, Flag, CheckCircle, Mic } from 'lucide-react';
-import { ParsedTaskData, TaskPriority, TaskStatus } from '@/types';
+import { ParsedTaskData, TaskPriority, TaskStatus } from '@/shared/types';
 
 interface TaskReviewModalProps {
   isOpen: boolean;

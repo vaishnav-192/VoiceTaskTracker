@@ -3,22 +3,22 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogOut, User as UserIcon, AlertTriangle, Camera } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
-import { signOut } from '@/lib/firebase/auth';
-import { useTasks } from '@/lib/hooks/useTasks';
-import { useToast } from '@/components/ui/Toast';
-import { VoiceRecorder } from '@/components/voice/VoiceRecorder';
-import { KanbanBoard } from '@/components/tasks/KanbanBoard';
-import { ListView } from '@/components/tasks/ListView';
-import { CalendarView } from '@/components/tasks/CalendarView';
-import { ViewToggle, ViewType } from '@/components/tasks/ViewToggle';
-import { TaskFilters, TaskFiltersState } from '@/components/tasks/TaskFilters';
-import { TaskForm } from '@/components/tasks/TaskForm';
-import { LoadingScreen } from '@/components/ui/Loading';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
-import { ProfilePhotoUpload } from '@/components/profile/ProfilePhotoUpload';
-import { Task, CreateTaskInput } from '@/types';
-import { getErrorMessage, logError } from '@/lib/errors';
+import { useAuth } from '@/frontend/context/AuthContext';
+import { signOut } from '@/backend/firebase/auth';
+import { useTasks } from '@/backend/hooks/useTasks';
+import { useToast } from '@/frontend/components/ui/Toast';
+import { VoiceRecorder } from '@/frontend/components/voice/VoiceRecorder';
+import { KanbanBoard } from '@/frontend/components/tasks/KanbanBoard';
+import { ListView } from '@/frontend/components/tasks/ListView';
+import { CalendarView } from '@/frontend/components/tasks/CalendarView';
+import { ViewToggle, ViewType } from '@/frontend/components/tasks/ViewToggle';
+import { TaskFilters, TaskFiltersState } from '@/frontend/components/tasks/TaskFilters';
+import { TaskForm } from '@/frontend/components/tasks/TaskForm';
+import { LoadingScreen } from '@/frontend/components/ui/Loading';
+import { ErrorBoundary } from '@/frontend/components/ui/ErrorBoundary';
+import { ProfilePhotoUpload } from '@/frontend/components/profile/ProfilePhotoUpload';
+import { Task, CreateTaskInput } from '@/shared/types';
+import { getErrorMessage, logError } from '@/backend/errors';
 
 export default function DashboardPage() {
   const { user, loading: authLoading, error: authError, isConfigured } = useAuth();

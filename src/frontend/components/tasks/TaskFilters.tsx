@@ -1,7 +1,7 @@
 'use client';
 
 import { Search, X } from 'lucide-react';
-import { TaskStatus, TaskPriority } from '@/types';
+import { TaskStatus, TaskPriority } from '@/shared/types';
 
 export interface TaskFiltersState {
   searchQuery: string;

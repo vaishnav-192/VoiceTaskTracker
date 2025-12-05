@@ -3,8 +3,8 @@
 import { useState, useRef } from 'react';
 import { User } from 'firebase/auth';
 import { Camera, Upload, Trash2, X, Loader2, UserIcon } from 'lucide-react';
-import { uploadProfilePhoto, deleteProfilePhoto } from '@/lib/firebase/storage';
-import { useToast } from '@/components/ui/Toast';
+import { uploadProfilePhoto, deleteProfilePhoto } from '@/backend/firebase/storage';
+import { useToast } from '@/frontend/components/ui/Toast';
 
 interface ProfilePhotoUploadProps {
   user: User;

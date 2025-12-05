@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Task, TaskStatus, TaskPriority } from '@/types';
+import { Task, TaskStatus, TaskPriority } from '@/shared/types';
 import { 
   ChevronLeft, 
   ChevronRight, 

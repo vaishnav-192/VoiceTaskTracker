@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Task, TaskStatus } from '@/types';
+import { Task, TaskStatus } from '@/shared/types';
 import { 
   Check, 
   Trash2, 
@@ -14,7 +14,7 @@ import {
   Calendar
 } from 'lucide-react';
 import { formatDistanceToNow, format, isPast, isToday } from 'date-fns';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { ConfirmDialog } from '@/frontend/components/ui/ConfirmDialog';
 
 interface TaskCardProps {
   task: Task;

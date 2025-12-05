@@ -1,14 +1,14 @@
 'use client';
 
 import { Mic, MicOff, Loader2, AlertCircle } from 'lucide-react';
-import { useSpeechRecognition } from '@/lib/hooks/useSpeechRecognition';
-import { useSpeechSynthesis } from '@/lib/hooks/useSpeechSynthesis';
-import { parseVoiceCommand, parseTaskFromVoice, generateVoiceResponse } from '@/lib/utils/taskParser';
-import { useToast } from '@/components/ui/Toast';
-import { useTasks } from '@/lib/hooks/useTasks';
-import { Task, ParsedTaskData } from '@/types';
+import { useSpeechRecognition } from '@/backend/hooks/useSpeechRecognition';
+import { useSpeechSynthesis } from '@/backend/hooks/useSpeechSynthesis';
+import { parseVoiceCommand, parseTaskFromVoice, generateVoiceResponse } from '@/backend/utils/taskParser';
+import { useToast } from '@/frontend/components/ui/Toast';
+import { useTasks } from '@/backend/hooks/useTasks';
+import { Task, ParsedTaskData } from '@/shared/types';
 import { useState, useEffect, useCallback } from 'react';
-import { getErrorMessage, logError } from '@/lib/errors';
+import { getErrorMessage, logError } from '@/backend/errors';
 import { TaskReviewModal } from './TaskReviewModal';
 
 interface VoiceRecorderProps {

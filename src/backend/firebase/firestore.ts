@@ -16,8 +16,8 @@ import {
   getDocs
 } from 'firebase/firestore';
 import { getFirebaseDb, isFirebaseReady } from './config';
-import { Task, CreateTaskInput, UpdateTaskInput, TaskStatus } from '@/types';
-import { FirestoreError, getErrorMessage, logError } from '@/lib/errors';
+import { Task, CreateTaskInput, UpdateTaskInput, TaskStatus } from '@/shared/types';
+import { FirestoreError, getErrorMessage, logError } from '@/backend/errors';
 
 const TASKS_COLLECTION = 'tasks';
 const MAX_TASKS_PER_USER = 1000; // Prevent unlimited growth

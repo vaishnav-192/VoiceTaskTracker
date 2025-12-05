@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Task, CreateTaskInput, UpdateTaskInput, TaskPriority, TaskStatus } from '@/types';
+import { Task, CreateTaskInput, UpdateTaskInput, TaskPriority, TaskStatus } from '@/shared/types';
 import { 
   subscribeToTasks, 
   createTask as createTaskApi, 
   updateTask as updateTaskApi, 
   deleteTask as deleteTaskApi 
-} from '@/lib/firebase/firestore';
-import { useAuth } from '@/context/AuthContext';
-import { getErrorMessage, logError } from '@/lib/errors';
+} from '@/backend/firebase/firestore';
+import { useAuth } from '@/frontend/context/AuthContext';
+import { getErrorMessage, logError } from '@/backend/errors';
 
 interface CreateTaskData {
   title: string;
