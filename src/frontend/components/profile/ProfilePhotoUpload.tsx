@@ -2,9 +2,10 @@
 
 import { useState, useRef } from 'react';
 import { User } from 'firebase/auth';
-import { Camera, Upload, Trash2, X, Loader2, UserIcon } from 'lucide-react';
+import { Camera, Upload, Trash2, X, Loader2, UserIcon, AlertCircle } from 'lucide-react';
 import { uploadProfilePhoto, deleteProfilePhoto } from '@/backend/firebase/storage';
 import { useToast } from '@/frontend/components/ui/Toast';
+import { getErrorMessage, logError } from '@/backend/errors';
 
 interface ProfilePhotoUploadProps {
   user: User;
@@ -18,6 +19,7 @@ export function ProfilePhotoUpload({ user, isOpen, onClose, onPhotoUpdated }: Pr
   const [isDeleting, setIsDeleting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { success: showSuccess, error: showError } = useToast();
 
@@ -25,15 +27,30 @@ export function ProfilePhotoUpload({ user, isOpen, onClose, onPhotoUpdated }: Pr
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Clear previous error
+    setUploadError(null);
+
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      showError('Please select an image file');
+      const errorMsg = 'Please select an image file (JPG, PNG, GIF, or WebP)';
+      setUploadError(errorMsg);
+      showError(errorMsg);
       return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      showError('Image must be less than 5MB');
+      const errorMsg = 'Image must be less than 5MB';
+      setUploadError(errorMsg);
+      showError(errorMsg);
+      return;
+    }
+    
+    // Validate empty file
+    if (file.size === 0) {
+      const errorMsg = 'Selected file is empty';
+      setUploadError(errorMsg);
+      showError(errorMsg);
       return;
     }
 
@@ -44,6 +61,10 @@ export function ProfilePhotoUpload({ user, isOpen, onClose, onPhotoUpdated }: Pr
     reader.onloadend = () => {
       setPreviewUrl(reader.result as string);
     };
+    reader.onerror = () => {
+      setUploadError('Failed to read file');
+      showError('Failed to read file');
+    };
     reader.readAsDataURL(file);
   };
 
@@ -51,16 +72,18 @@ export function ProfilePhotoUpload({ user, isOpen, onClose, onPhotoUpdated }: Pr
     if (!selectedFile) return;
 
     setIsUploading(true);
+    setUploadError(null);
+    
     try {
       const newPhotoURL = await uploadProfilePhoto(selectedFile);
       onPhotoUpdated(newPhotoURL);
       showSuccess('Profile photo updated successfully!');
       handleClose();
     } catch (error) {
-      console.error('Upload error:', error);
-      showError(
-        error instanceof Error ? error.message : 'Failed to upload photo'
-      );
+      const errorMsg = getErrorMessage(error);
+      setUploadError(errorMsg);
+      logError(error, { context: 'ProfilePhotoUpload.handleUpload', userId: user.uid });
+      showError(errorMsg);
     } finally {
       setIsUploading(false);
     }
@@ -70,16 +93,18 @@ export function ProfilePhotoUpload({ user, isOpen, onClose, onPhotoUpdated }: Pr
     if (!user.photoURL) return;
 
     setIsDeleting(true);
+    setUploadError(null);
+    
     try {
       await deleteProfilePhoto();
       onPhotoUpdated(null);
       showSuccess('Profile photo removed');
       handleClose();
     } catch (error) {
-      console.error('Delete error:', error);
-      showError(
-        error instanceof Error ? error.message : 'Failed to remove photo'
-      );
+      const errorMsg = getErrorMessage(error);
+      setUploadError(errorMsg);
+      logError(error, { context: 'ProfilePhotoUpload.handleDelete', userId: user.uid });
+      showError(errorMsg);
     } finally {
       setIsDeleting(false);
     }
@@ -88,6 +113,7 @@ export function ProfilePhotoUpload({ user, isOpen, onClose, onPhotoUpdated }: Pr
   const handleClose = () => {
     setPreviewUrl(null);
     setSelectedFile(null);
+    setUploadError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -246,6 +272,16 @@ export function ProfilePhotoUpload({ user, isOpen, onClose, onPhotoUpdated }: Pr
           <p className="mt-4 text-xs text-gray-400 text-center">
             Supported formats: JPG, PNG, GIF, WebP. Max size: 5MB
           </p>
+          
+          {/* Error display */}
+          {uploadError && (
+            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg" role="alert">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                <p className="text-sm text-red-700">{uploadError}</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

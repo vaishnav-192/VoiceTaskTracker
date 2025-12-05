@@ -246,17 +246,11 @@ export function VoiceRecorder({ tasks, onTaskAction }: VoiceRecorderProps) {
             </div>
           )}
 
-          {/* Error - Inline */}
+          {/* Error - Inline with better messages */}
           {voiceError && (
-            <div className="mt-2 text-xs text-red-600">
-              {voiceError === 'not-allowed' 
-                ? 'Mic access denied'
-                : voiceError === 'no-speech'
-                  ? 'No speech detected'
-                  : voiceError === 'network'
-                    ? 'Network error - check connection'
-                    : `Error: ${voiceError}`
-              }
+            <div className="mt-2 text-xs text-red-600 flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" />
+              <span>{voiceError}</span>
             </div>
           )}
         </div>
